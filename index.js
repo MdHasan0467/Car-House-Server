@@ -70,31 +70,54 @@ async function run() {
 		const result = await advertiseDataCollection.insertOne(adData);
 		res.send(result);
 	});
-
 	//!======END======>
 
-	//!======START <- get product By categorys all data for Home page Advertisement  ======>
+	//!======START <- get product By categories all data for Home page Advertisement  ======>
+	app.get('/advertisement/categories', async (req, res) => {
+		const query = {};
+		const result = await advertiseDataCollection.find(query).toArray();
+		res.send(result);
+	});
+	//!======END======>
 
+	//!======START <- Getting whole appointment data from the server side for client side -> ======>
+	// app.get('/appointOptions', async (req, res) => {
+	// 	//Getting all data from data base
+	// 	const query = {};
+	// 	const options = await appointmentOptionCollection.find(query).toArray();
+
+	// 	// Filtering data from option
+	// 	const date = req.query.date;
+	// 	const dateQuery = { appointmentDate: date };
+	// 	const bookedOption = await bookingsCollection.find(dateQuery).toArray();
+
+	// 	// Give me the value which are already booked
+	// 	options.forEach((option) => {
+	// 		optionBooked = bookedOption.filter(
+	// 			(book) => book.treatment === option.name
+	// 		);
+
+	// 		bookedSlots = optionBooked.map((book) => book.appointmentTime);
+
+	// 		const remainingSlots = option.slots.filter(
+	// 			(slot) => !bookedSlots.includes(slot)
+	// 		);
+
+	// 		option.slots = remainingSlots;
+	// 	});
+
+	// 	res.send(options);
+	// });
+	//!======END======>
+
+	//!======START <- get product By categories single data for Home page Advertisement  ======>
 	app.get('/advertisement/:category', async (req, res) => {
-		console.log(req.params.category);
+		// console.log(req.params.category);
 		// const category = req.params.category;
 		// const query = { category:Tesla };
-		// const result = await usersCollection.find(query).toArray()
+		// const result = await usersCollection.findOne(query)
 		// res.send(result)
 	});
-
-	//!======END======>
-
-	//!======START <- get product By categorys single data for Home page Advertisement  ======>
-
-	app.get('/advertisement/:category', async (req, res) => {
-		console.log(req.params.category);
-		const category = req.params.category;
-		const query = { category:Tesla };
-		const result = await usersCollection.findOne(query)
-		res.send(result)
-	});
-
 	//!======END======>
 }
 run().catch(console.log);
