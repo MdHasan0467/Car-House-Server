@@ -89,10 +89,10 @@ async function run() {
 
 	app.get('/advertisement/:category', async (req, res) => {
 		console.log(req.params.category);
-		// const category = req.params.category;
-		// const query = { category:Tesla };
-		// const result = await usersCollection.findOne(query)
-		// res.send(result)
+		const category = req.params.category;
+		const query = { category:Tesla };
+		const result = await usersCollection.findOne(query)
+		res.send(result)
 	});
 
 	//!======END======>
