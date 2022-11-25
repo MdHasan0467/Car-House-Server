@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { query } = require('express');
 require('dotenv').config();
 const app = express();
 
@@ -18,6 +19,13 @@ const client = new MongoClient(uri, {
 	serverApi: ServerApiVersion.v1,
 });
 
+
+
+
+
+
+
+
 async function run() {
 	const carsResaleCollection = client
 		.db('carsResale')
@@ -29,6 +37,41 @@ async function run() {
 		.db('carsResale')
 		.collection('advertiseData');
 	const usersCollection = client.db('carsResale').collection('users');
+
+	//!======START <- Collect User Info from Sign up and set it database -> ======>
+	// app.post('/users', async (req, res) => {
+	// 	// console.log('touch')
+	// 	const user = req.body;
+	// 	const result = await usersCollection.insertOne(user)
+	// 	res.send(result);
+	// })
+
+	//!======END======>
+	//todo: Same code here also
+	// //!======START <- Collect User Info from Sign up and set it database -> ======>
+	app.post('/users', async (req, res) => {
+		// const user = req.body;
+		const usersList = await usersCollection.count({});
+
+		if (usersList !== 0) {
+			res.send((result = await usersCollection.insertOne(req.body)));
+		} else {
+			const user = req.body;
+			user.role = 'admin';
+			const result = await usersCollection.insertOne(user);
+			res.send(result);
+		}
+	});
+	// //todo=====END======>
+
+	//! get users from mongodb for Home page
+
+		app.get('/users', async (req, res) => {
+			const query = {};
+			const result = await usersCollection.find(query).toArray();
+			res.send(result);
+		});
+	// //todo=====END======>
 
 	//!Add Products Cetagories dynamically by user...
 	app.post('/cetagories', async (req, res) => {
@@ -42,9 +85,9 @@ async function run() {
 		res.send(result);
 	});
 
-	//!======END======>
+	//!todo======END======>
 
-	//!======START <- get products for My Products route ======>
+	//!======START <- get products for My-Products route ======>
 	app.get('/products', async (req, res) => {
 		const query = {};
 		const result = await carsResaleCollection.find(query).toArray();
@@ -64,6 +107,57 @@ async function run() {
 
 	//!======END======>
 
+	//TODO:============================!!======================>
+	//!=====START======Home page Product categories.......======>
+
+	app.get('/tesla', async (req, res) => {
+		result = await carsResaleCollection.findOne({ category: 'Tesla' });
+		res.send(result);
+		// res.send({name:'wroking'})
+	});
+	app.get('/mercedes', async (req, res) => {
+		result = await carsResaleCollection.findOne({ category: 'Mercedes_Benz' });
+		res.send(result);
+		// res.send({name:'wroking'})
+	});
+	app.get('/rolls', async (req, res) => {
+		result = await carsResaleCollection.findOne({ category: 'Rolls_Royce' });
+		res.send(result);
+		// res.send({name:'wroking'})
+	});
+	//!=====END======!
+	//!=====START======Company wise data load.......======>
+
+	app.get('/teslaDatas', async (req, res) => {
+		const query = { category: 'Tesla' };
+		result = await carsResaleCollection.find(query).toArray();
+		res.send(result);
+		// res.send({name:'wroking'})
+	});
+	app.get('/mercedesDatas', async (req, res) => {
+		result = await carsResaleCollection
+			.find({ category: 'Mercedes_Benz' })
+			.toArray();
+		res.send(result);
+		// res.send({name:'wroking'})
+	});
+	app.get('/rollsDatas', async (req, res) => {
+		const query = { category: 'Rolls_Royce' };
+		result = await carsResaleCollection.find(query).toArray();
+		res.send(result);
+		// res.send({name:'wroking'})
+	});
+	//!=====END======!
+	// //!======START <- get data by its category name  ======>
+	// app.get('category/:name', async (req, res) => {
+	// 	const name = req.params.name;
+	// 	result = await carsResaleCollection.find({ category: name }).toArray();
+	// 	res.send(result);
+	// });
+	// //!======END======>
+
+	//TODO:============================!!======================>
+
 	//!======START <- post Advertisement Data in Mongodb  ======>
 	app.post('/advertisement', async (req, res) => {
 		const adData = req.body;
@@ -80,34 +174,20 @@ async function run() {
 	});
 	//!======END======>
 
-	//!======START <- Getting whole appointment data from the server side for client side -> ======>
-	// app.get('/appointOptions', async (req, res) => {
-	// 	//Getting all data from data base
-	// 	const query = {};
-	// 	const options = await appointmentOptionCollection.find(query).toArray();
+	//!======START <- Collect User Info from Sign up and set it database -> ======>
+	app.post('/users', async (req, res) => {
+		// const user = req.body;
+		const usersList = await usersCollection.count({});
 
-	// 	// Filtering data from option
-	// 	const date = req.query.date;
-	// 	const dateQuery = { appointmentDate: date };
-	// 	const bookedOption = await bookingsCollection.find(dateQuery).toArray();
-
-	// 	// Give me the value which are already booked
-	// 	options.forEach((option) => {
-	// 		optionBooked = bookedOption.filter(
-	// 			(book) => book.treatment === option.name
-	// 		);
-
-	// 		bookedSlots = optionBooked.map((book) => book.appointmentTime);
-
-	// 		const remainingSlots = option.slots.filter(
-	// 			(slot) => !bookedSlots.includes(slot)
-	// 		);
-
-	// 		option.slots = remainingSlots;
-	// 	});
-
-	// 	res.send(options);
-	// });
+		if (usersList !== 0) {
+			res.send((result = await usersCollection.insertOne(req.body)));
+		} else {
+			const user = req.body;
+			user.role = 'admin';
+			const result = await usersCollection.insertOne(user);
+			res.send(result);
+		}
+	});
 	//!======END======>
 
 	//!======START <- get product By categories single data for Home page Advertisement  ======>
