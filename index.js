@@ -56,6 +56,14 @@ async function run() {
 		}
 	});
 	// //todo=====END======>
+	// //!======START <- Collect User Info from log in page for Google Login Which by default a buyer/user-> ======>
+	app.post('/googlebuyer', async (req, res) => {
+		const user = req.body;
+		user.role = 'Buyer';
+		const result = await usersCollection.insertOne(user);
+		res.send(result);
+	});
+	// //todo=====END======>
 
 	//! get user  from mongodb for Home page ==> for identify is he a admin or buyer or seller?
 
@@ -71,8 +79,6 @@ async function run() {
 	});
 	// //todo=====END======>
 
-
-
 	//!======START <- add a new product ======>
 	app.post('/products', async (req, res) => {
 		const product = req.body;
@@ -84,7 +90,7 @@ async function run() {
 
 	//!======START <- get products for My-Products route ======>
 	// app.get('/products/:email', async (req, res) => {
-		
+
 	// 	const email = req.query.email;
 	// 	const query = {
 	// 		authorEmail: email,
@@ -95,25 +101,43 @@ async function run() {
 
 	//!======END======>
 
-
-
-	//todo--------------------------------
+	//!======START <- get products for My-Products route ======>
 	app.get('/products', async (req, res) => {
 		const email = req.query.email;
-		const query = {email: email};
+		const query = { email: email };
 		const products = await carsResaleCollection.find(query).toArray();
 		// console.log(products)
-		res.send(products)
+		res.send(products);
+	});
+	//todo--------------------------------
+	//!======START <- get products for My-Products route ======>
+	app.get('/myorders', async (req, res) => {
+		const email = req.query.email;
+		// console.log(email);
+		const query = { sellerEmail: email };
+		const orders = await ordersCollection.find(query).toArray();
+		// console.log('orders')
+		res.send(orders);
 	});
 	//todo--------------------------------
 
-
-
-
+	//!======START <- get All Sellers  ======>
+	app.get('/usersrole', async (req, res) => {
+		result = await usersCollection
+			.find({ role: 'Seller' })
+			.toArray();
+		res.send(result);
+	})
+	//todo--------------------------------
+	//!======START <- get All Buyers  ======>
+	app.get('/usersroleBuyers', async (req, res) => {
+		result = await usersCollection.find({ role: 'Buyer' }).toArray();
+		res.send(result);
+	})
+	//todo--------------------------------
 
 	//!======START <- get product By Id for Advertisement  ======>
 	app.get('/productById/:id', async (req, res) => {
-		
 		const id = req.params.id;
 		const query = { _id: ObjectId(id) };
 		const result = await carsResaleCollection.findOne(query);
