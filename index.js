@@ -30,6 +30,7 @@ async function run() {
 		.db('carsResale')
 		.collection('advertiseData');
 	const usersCollection = client.db('carsResale').collection('users');
+	const ordersCollection = client.db('carsResale').collection('orders');
 
 	//!======START <- Collect User Info from Sign up and set it database -> ======>
 	// app.post('/users', async (req, res) => {
@@ -91,7 +92,7 @@ async function run() {
 		const query = {
 			authorEmail: email,
 		};
-		const result = await carsResaleCollection.findOne(query)
+		const result = await carsResaleCollection.findOne(query);
 		res.send(result);
 	});
 
@@ -156,8 +157,26 @@ async function run() {
 	// 	res.send(result);
 	// });
 	// //!======END======>
+	//TODO:============================!Modal Data!======================>
 
-	//TODO:============================!!======================>
+	//!======START <- add booking modal Data ======>
+	app.post('/bookingData', async (req, res) => {
+		const product = req.body;
+		const result = await ordersCollection.insertOne(product);
+		res.send(result);
+	});
+
+	//!todo======END======>
+	//!======START <- add booking modal Data ======>
+	app.get('/bookingData', async (req, res) => {
+		const product = {};
+		const result = await ordersCollection.find(product).toArray();
+		res.send(result);
+	});
+
+	//!todo======END======>
+
+	//TODO:============================!Advertisement!======================>
 
 	//!======START <- post Advertisement Data in Mongodb  ======>
 	app.post('/advertisement', async (req, res) => {
