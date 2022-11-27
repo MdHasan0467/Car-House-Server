@@ -44,7 +44,6 @@ async function run() {
 	//todo: Same code here also
 	// //!======START <- Collect User Info from Sign up and set it database -> ======>
 	app.post('/users', async (req, res) => {
-		// const user = req.body;
 		const usersList = await usersCollection.count({});
 
 		if (usersList !== 0) {
@@ -72,10 +71,7 @@ async function run() {
 	});
 	// //todo=====END======>
 
-	//!Add Products Cetagories dynamically by user...
-	app.post('/cetagories', async (req, res) => {
-		//***** Add category from admin dashboard */
-	});
+
 
 	//!======START <- add a new product ======>
 	app.post('/products', async (req, res) => {
@@ -87,20 +83,37 @@ async function run() {
 	//!todo======END======>
 
 	//!======START <- get products for My-Products route ======>
-	app.get('/products/:email', async (req, res) => {
-		const email = req.query.email;
-		const query = {
-			authorEmail: email,
-		};
-		const result = await carsResaleCollection.findOne(query);
-		res.send(result);
-	});
+	// app.get('/products/:email', async (req, res) => {
+		
+	// 	const email = req.query.email;
+	// 	const query = {
+	// 		authorEmail: email,
+	// 	};
+	// 	const result = await carsResaleCollection.find(query).toArray();
+	// 	res.send(result);
+	// });
 
 	//!======END======>
 
+
+
+	//todo--------------------------------
+	app.get('/products', async (req, res) => {
+		const email = req.query.email;
+		const query = {email: email};
+		const products = await carsResaleCollection.find(query).toArray();
+		// console.log(products)
+		res.send(products)
+	});
+	//todo--------------------------------
+
+
+
+
+
 	//!======START <- get product By Id for Advertisement  ======>
 	app.get('/productById/:id', async (req, res) => {
-		// console.log(req.params.id);
+		
 		const id = req.params.id;
 		const query = { _id: ObjectId(id) };
 		const result = await carsResaleCollection.findOne(query);
