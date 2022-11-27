@@ -19,13 +19,6 @@ const client = new MongoClient(uri, {
 	serverApi: ServerApiVersion.v1,
 });
 
-
-
-
-
-
-
-
 async function run() {
 	const carsResaleCollection = client
 		.db('carsResale')
@@ -64,13 +57,18 @@ async function run() {
 	});
 	// //todo=====END======>
 
-	//! get users from mongodb for Home page
+	//! get user  from mongodb for Home page ==> for identify is he a admin or buyer or seller?
 
-		app.get('/users', async (req, res) => {
-			const query = {};
-			const result = await usersCollection.find(query).toArray();
-			res.send(result);
-		});
+	app.get('/users/:email', async (req, res) => {
+		const email = req.params.email;
+		console.log(email);
+		const query = { email: email };
+		const result = await usersCollection
+			.find(query)
+			.project({ role: 1, _id: 0 })
+			.toArray();
+		res.send(result);
+	});
 	// //todo=====END======>
 
 	//!Add Products Cetagories dynamically by user...
@@ -88,9 +86,12 @@ async function run() {
 	//!todo======END======>
 
 	//!======START <- get products for My-Products route ======>
-	app.get('/products', async (req, res) => {
-		const query = {};
-		const result = await carsResaleCollection.find(query).toArray();
+	app.get('/products/:email', async (req, res) => {
+		const email = req.query.email;
+		const query = {
+			authorEmail: email,
+		};
+		const result = await carsResaleCollection.findOne(query)
 		res.send(result);
 	});
 
