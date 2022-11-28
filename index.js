@@ -123,17 +123,15 @@ async function run() {
 
 	//!======START <- get All Sellers  ======>
 	app.get('/usersrole', async (req, res) => {
-		result = await usersCollection
-			.find({ role: 'Seller' })
-			.toArray();
+		result = await usersCollection.find({ role: 'Seller' }).toArray();
 		res.send(result);
-	})
+	});
 	//todo--------------------------------
 	//!======START <- get All Buyers  ======>
 	app.get('/usersroleBuyers', async (req, res) => {
 		result = await usersCollection.find({ role: 'Buyer' }).toArray();
 		res.send(result);
-	})
+	});
 	//todo--------------------------------
 
 	//!======START <- get product By Id for Advertisement  ======>
@@ -255,6 +253,27 @@ async function run() {
 		// const result = await usersCollection.findOne(query)
 		// res.send(result)
 	});
+	//!======END======>
+
+	//!======START <- Delete buyer info -> ======>
+	app.delete('/Buyer/:id', async (req, res) => {
+		console.log('delete');
+		const id = req.params.id;
+		const query = { _id: ObjectId(id) };
+		const result = await usersCollection.deleteOne(query);
+		res.send(result);
+	});
+
+	//!======END======>
+	//!======START <- Delete  seller info -> ======>
+	app.delete('/seller/:id', async (req, res) => {
+		console.log('delete');
+		const id = req.params.id;
+		const query = { _id: ObjectId(id) };
+		const result = await usersCollection.deleteOne(query);
+		res.send(result);
+	});
+
 	//!======END======>
 }
 run().catch(console.log);
