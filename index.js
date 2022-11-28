@@ -31,6 +31,7 @@ async function run() {
 		.collection('advertiseData');
 	const usersCollection = client.db('carsResale').collection('users');
 	const ordersCollection = client.db('carsResale').collection('orders');
+	const wishCollection = client.db('carsResale').collection('wishLists');
 
 	//!======START <- Collect User Info from Sign up and set it database -> ======>
 	// app.post('/users', async (req, res) => {
@@ -69,7 +70,7 @@ async function run() {
 
 	app.get('/users/:email', async (req, res) => {
 		const email = req.params.email;
-		console.log(email);
+		// console.log(email);
 		const query = { email: email };
 		const result = await usersCollection
 			.find(query)
@@ -121,6 +122,20 @@ async function run() {
 	});
 	//todo--------------------------------
 
+	//TODO:============================!Get My Wish List Data!======================>
+	//!======START <- get products for My-Products route ======>
+	app.get('/mywish', async (req, res) => {
+		const email = req.query.email;
+		// console.log(email);
+		const query = { email: email };
+		const orders = await wishCollection.find(query).toArray();
+		// console.log('orders')
+		res.send(orders);
+	});
+	//todo--------------------------------
+
+	//TODO:============================!Get All Sellers & All Buyers!======================>
+
 	//!======START <- get All Sellers  ======>
 	app.get('/usersrole', async (req, res) => {
 		result = await usersCollection.find({ role: 'Seller' }).toArray();
@@ -134,17 +149,7 @@ async function run() {
 	});
 	//todo--------------------------------
 
-	//!======START <- get product By Id for Advertisement  ======>
-	app.get('/productById/:id', async (req, res) => {
-		const id = req.params.id;
-		const query = { _id: ObjectId(id) };
-		const result = await carsResaleCollection.findOne(query);
-		res.send(result);
-	});
-
-	//!======END======>
-
-	//TODO:============================!!======================>
+	//TODO:============================!Product categories!======================>
 	//!=====START======Home page Product categories.......======>
 
 	app.get('/tesla', async (req, res) => {
@@ -163,6 +168,8 @@ async function run() {
 		// res.send({name:'wroking'})
 	});
 	//!=====END======!
+
+	//TODO:============================!Company wise data load!======================>
 	//!=====START======Company wise data load.......======>
 
 	app.get('/teslaDatas', async (req, res) => {
@@ -211,6 +218,16 @@ async function run() {
 
 	//!todo======END======>
 
+	//TODO:============================!Wish List!======================>
+	//!======START <- post Wish Lists Data in Mongodb  ======>
+	app.post('/wishLists', async (req, res) => {
+		console.log('wishLists');
+		const adData = req.body;
+		const result = await wishCollection.insertOne(adData);
+		res.send(result);
+	});
+	//!======END======>
+
 	//TODO:============================!Advertisement!======================>
 
 	//!======START <- post Advertisement Data in Mongodb  ======>
@@ -219,6 +236,16 @@ async function run() {
 		const result = await advertiseDataCollection.insertOne(adData);
 		res.send(result);
 	});
+	//!======END======>
+
+	//!======START <- get product By Id for Advertisement  ======>
+	app.get('/productById/:id', async (req, res) => {
+		const id = req.params.id;
+		const query = { _id: ObjectId(id) };
+		const result = await carsResaleCollection.findOne(query);
+		res.send(result);
+	});
+
 	//!======END======>
 
 	//!======START <- get product By categories all data for Home page Advertisement  ======>
@@ -245,15 +272,7 @@ async function run() {
 	});
 	//!======END======>
 
-	//!======START <- get product By categories single data for Home page Advertisement  ======>
-	app.get('/advertisement/:category', async (req, res) => {
-		// console.log(req.params.category);
-		// const category = req.params.category;
-		// const query = { category:Tesla };
-		// const result = await usersCollection.findOne(query)
-		// res.send(result)
-	});
-	//!======END======>
+	//todo===================delete======================>
 
 	//!======START <- Delete buyer info -> ======>
 	app.delete('/Buyer/:id', async (req, res) => {
